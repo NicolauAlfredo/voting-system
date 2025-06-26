@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class VoteRepository {
 
-    private final File file = new File("votes.json");
+    private final File file = new File("data/votes.json");
     private final ObjectMapper mapper = new ObjectMapper();
     private List<Vote> votes;
 

@@ -2,14 +2,42 @@
 <!--
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+--> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>🗳️ Electronic Voting System</h1>
+
+    <section>
+        <h2>Add Candidate</h2>
+        <form id="candidate-form">
+            <input type="number" id="candidate-id" placeholder="ID" required>
+            <input type="text" id="candidate-name" placeholder="Candidate Name" required>
+            <button type="submit">Add</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Vote</h2>
+        <form id="vote-form">
+            <input type="text" id="voter-id" placeholder="Your Voter ID" required>
+            <select id="candidate-select"></select>
+            <button type="submit">Vote</button>
+        </form>
+        <div id="vote-message"></div>
+    </section>
+
+    <section>
+        <h2>Results</h2>
+        <button onclick="loadResults()">Refresh Results</button>
+        <ul id="results-list"></ul>
+    </section>
+
+    <script src="script.js"></script>
+</body>
 </html>
+
