@@ -9,6 +9,7 @@ import com.nicolaualfredo.voting.model.Candidate;
 import com.nicolaualfredo.voting.model.Vote;
 import com.nicolaualfredo.voting.repository.CandidateRepository;
 import com.nicolaualfredo.voting.repository.VoteRepository;
+import com.nicolaualfredo.voting.service.CorsUtil;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -28,6 +29,21 @@ public class VoteHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        CorsUtil.enableCors(exchange); // <- adicionado aqui
+
+        String method = exchange.getRequestMethod();
+
+        if (method.equalsIgnoreCase("OPTIONS")) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+
+        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+            CorsUtil.enableCors(exchange);
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+
         if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
             sendResponse(exchange, 405, "{\"error\": \"Method not allowed\"}");
             return;

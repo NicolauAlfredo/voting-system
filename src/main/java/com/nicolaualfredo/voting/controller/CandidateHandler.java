@@ -7,6 +7,7 @@ package com.nicolaualfredo.voting.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolaualfredo.voting.model.Candidate;
 import com.nicolaualfredo.voting.repository.CandidateRepository;
+import com.nicolaualfredo.voting.service.CorsUtil;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -26,7 +27,20 @@ public class CandidateHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        CorsUtil.enableCors(exchange); // <- adicionado aqui
+
         String method = exchange.getRequestMethod();
+
+        if (method.equalsIgnoreCase("OPTIONS")) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+
+        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+            CorsUtil.enableCors(exchange);
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
 
         if (method.equalsIgnoreCase("GET")) {
             List<Candidate> candidates = repository.findAll();

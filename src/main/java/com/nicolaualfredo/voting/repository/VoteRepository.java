@@ -48,7 +48,8 @@ public class VoteRepository {
     }
 
     public List<Vote> findAll() {
-        return new ArrayList<>(votes);
+        loadVotes();
+        return votes;
     }
 
     public boolean hasVoted(String voterId) {
@@ -58,5 +59,20 @@ public class VoteRepository {
     public void addVote(Vote vote) {
         votes.add(vote);
         save();
+    }
+
+    private void loadVotes() {
+        try {
+            File file = new File("data/votes.json");
+            if (file.exists()) {
+                votes = mapper.readValue(file, new TypeReference<List<Vote>>() {
+                });
+            } else {
+                votes = new ArrayList<>();
+            }
+        } catch (IOException e) {
+            votes = new ArrayList<>();
+            System.err.println("Failed to load votes: " + e.getMessage());
+        }
     }
 }

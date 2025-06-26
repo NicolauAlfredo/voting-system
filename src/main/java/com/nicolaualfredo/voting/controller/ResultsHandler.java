@@ -9,12 +9,13 @@ import com.nicolaualfredo.voting.model.Candidate;
 import com.nicolaualfredo.voting.model.Vote;
 import com.nicolaualfredo.voting.repository.CandidateRepository;
 import com.nicolaualfredo.voting.repository.VoteRepository;
+import com.nicolaualfredo.voting.service.CorsUtil;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets; 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,28 +31,39 @@ public class ResultsHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        CorsUtil.enableCors(exchange);
+
+        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+
         if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
             sendResponse(exchange, 405, "{\"error\": \"Method not allowed\"}");
             return;
         }
 
+        // Resultado será um Map de nome do candidato -> total de votos
+        Map<String, Integer> results = new LinkedHashMap<>();
+
         List<Candidate> candidates = candidateRepo.findAll();
         List<Vote> votes = voteRepo.findAll();
 
-        Map<String, Integer> results = new HashMap<>();
-        for (Candidate c : candidates) {
-            results.put(c.getName(), 0);
+        // Inicializa todos com 0
+        for (Candidate candidate : candidates) {
+            results.put(candidate.getName(), 0);
         }
 
         for (Vote vote : votes) {
-            Candidate candidate = candidateRepo.findById(vote.getCandidateId());
-            if (candidate != null) {
-                results.put(candidate.getName(), results.get(candidate.getName()) + 1);
+            Candidate votedCandidate = candidateRepo.findById(vote.getCandidateId());
+            if (votedCandidate != null) {
+                String name = votedCandidate.getName();
+                results.put(name, results.get(name) + 1);
             }
         }
 
-        String response = mapper.writeValueAsString(results);
-        sendResponse(exchange, 200, response);
+        String json = mapper.writeValueAsString(results);
+        sendResponse(exchange, 200, json);
     }
 
     private void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {

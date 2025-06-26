@@ -23,13 +23,12 @@ public class Server {
 
             server.createContext("/candidates", new CandidateHandler());
             server.createContext("/vote", new VoteHandler());
-            server.createContext("/results", new ResultsHandler());
+            server.createContext("/results", new ResultsHandler()); 
 
             server.setExecutor(null);
             server.start();
             System.out.println("🟢 Server running at http://localhost:8000");
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
