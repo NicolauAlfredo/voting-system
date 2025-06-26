@@ -10,7 +10,7 @@ package com.nicolaualfredo.voting.model;
  */
 public class Vote {
 
-    private String voterId;  // identifica o eleitor, ex: CPF, RG, ou UUID
+    private String voterId; 
     private int candidateId;
 
     public Vote() {
